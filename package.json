@@ -11,6 +11,10 @@
   "scripts": {
     "test": "tape test/**.js"
   },
+  "files": [
+    "cli.js",
+    "src/"
+  ],
   "homepage": "https://github.com/eush77/nbsp-advisor",
   "repository": {
     "type": "git",
