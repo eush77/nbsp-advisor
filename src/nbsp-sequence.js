@@ -10,5 +10,5 @@ var nbsp = {
 
 
 module.exports = function (filename) {
-  return nbsp[extname(filename)];
+  return nbsp[extname(filename).slice(1)];
 };
