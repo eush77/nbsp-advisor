@@ -1,6 +1,6 @@
 {
   "name": "nbsp-advisor",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Tries to catch obvious cases of missing nbsp and fix it for you",
   "author": "Eugene Sharygin <eush77@gmail.com>",
   "license": "MIT",
