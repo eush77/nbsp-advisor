@@ -26,6 +26,7 @@
     "tool"
   ],
   "dependencies": {
+    "chalk": "^1.0.0",
     "flatmap": "0.0.3",
     "regexp.execall": "^0.1.0"
   },

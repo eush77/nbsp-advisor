@@ -4,7 +4,8 @@
 var nbspPositions = require('./src/nbsp-positions'),
     nbspSequence = require('./src/nbsp-sequence');
 
-var flatmap = require('flatmap');
+var flatmap = require('flatmap'),
+    chalk = require('chalk');
 
 var fs = require('fs'),
     Path = require('path');
@@ -25,12 +26,12 @@ var scanFile = (function () {
     if (needEmptyLineBefore) {
       console.log();
     }
-    console.log(filename);
+    console.log(chalk.bold.green(filename));
     needEmptyLineBefore = true;
 
     var data = text.split('');
     positions.forEach(function (position) {
-      data[position] = nbsp;
+      data[position] = chalk.green(nbsp);
     });
     console.log(data.join('').trim());
   };
