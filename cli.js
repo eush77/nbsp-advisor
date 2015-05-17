@@ -7,7 +7,8 @@ var nbspPositions = require('./src/nbsp-positions'),
 var flatmap = require('flatmap'),
     fzip = require('fzip'),
     chalk = require('chalk'),
-    inquire = require('inquirer').prompt;
+    inquire = require('inquirer').prompt,
+    each = require('async-each-series');
 
 var fs = require('fs'),
     Path = require('path');
@@ -16,12 +17,12 @@ var fs = require('fs'),
 var scanFile = (function () {
   var needEmptyLineBefore = false;
 
-  return function (filename) {
+  return function (filename, cb) {
     var nbsp = nbspSequence(filename) || '~';
     var text = fs.readFileSync(filename, { encoding: 'utf8' });
     var positions = nbspPositions(text);
     if (!positions.length) {
-      return;
+      return cb();
     }
 
     // Print the header.
@@ -45,6 +46,7 @@ var scanFile = (function () {
       if (answer.save) {
         fs.writeFileSync(filename, parts.join(nbsp), { encoding: 'utf8' });
       }
+      cb();
     });
   };
 }());
@@ -85,5 +87,5 @@ var getFiles = function (path) {
     argv = ['.'];
   }
 
-  flatmap(argv, getFiles).forEach(scanFile);
+  each(flatmap(argv, getFiles), scanFile);
 }(process.argv.slice(2)));
