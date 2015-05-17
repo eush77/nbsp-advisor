@@ -5,7 +5,9 @@ var nbspPositions = require('./src/nbsp-positions'),
     nbspSequence = require('./src/nbsp-sequence');
 
 var flatmap = require('flatmap'),
-    chalk = require('chalk');
+    fzip = require('fzip'),
+    chalk = require('chalk'),
+    inquire = require('inquirer').prompt;
 
 var fs = require('fs'),
     Path = require('path');
@@ -18,22 +20,32 @@ var scanFile = (function () {
     var nbsp = nbspSequence(filename) || '~';
     var text = fs.readFileSync(filename, { encoding: 'utf8' });
     var positions = nbspPositions(text);
-
     if (!positions.length) {
       return;
     }
 
+    // Print the header.
     if (needEmptyLineBefore) {
       console.log();
     }
     console.log(chalk.bold.green(filename));
     needEmptyLineBefore = true;
 
-    var data = text.split('');
-    positions.forEach(function (position) {
-      data[position] = chalk.green(nbsp);
+    var parts = fzip([-1].concat(positions), positions.concat(Infinity),
+                     function (left, right) {
+                       return text.slice(left + 1, right);
+                     });
+    console.log(parts.join(chalk.green(nbsp)).trim());
+
+    inquire({
+      type: 'confirm',
+      message: 'Save the file',
+      name: 'save'
+    }, function (answer) {
+      if (answer.save) {
+        fs.writeFileSync(filename, parts.join(nbsp), { encoding: 'utf8' });
+      }
     });
-    console.log(data.join('').trim());
   };
 }());
 

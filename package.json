@@ -28,6 +28,8 @@
   "dependencies": {
     "chalk": "^1.0.0",
     "flatmap": "0.0.3",
+    "fzip": "^0.2.0",
+    "inquirer": "^0.8.4",
     "regexp.execall": "^0.1.0"
   },
   "devDependencies": {}
