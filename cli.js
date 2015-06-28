@@ -20,42 +20,69 @@ function usage() {
 }
 
 
-var scanFile = (function () {
-  var needEmptyLineBefore = false;
+var Scanner = function () {
+  return {
+    needEmptyLineBefore: false,
 
-  return function (filename, cb) {
-    var nbsp = nbspSequence(filename) || '~';
-    var text = fs.readFileSync(filename, { encoding: 'utf8' });
-    var positions = nbspPositions(text);
-    if (!positions.length) {
-      return cb();
-    }
-
-    // Print the header.
-    if (needEmptyLineBefore) {
-      console.log();
-    }
-    console.log(chalk.bold.green(filename));
-    needEmptyLineBefore = true;
-
-    var parts = fzip([-1].concat(positions), positions.concat(Infinity),
-                     function (left, right) {
-                       return text.slice(left + 1, right);
-                     });
-    console.log(parts.join(chalk.green(nbsp)).trim());
-
-    inquire({
-      type: 'confirm',
-      message: 'Save the file',
-      name: 'save'
-    }, function (answer) {
-      if (answer.save) {
-        fs.writeFileSync(filename, parts.join(nbsp), { encoding: 'utf8' });
+    scanFile: function (filename, cb) {
+      // Print the header.
+      if (this.needEmptyLineBefore) {
+        console.log();
       }
-      cb();
-    });
+      console.log(chalk.bold.green(filename));
+      this.needEmptyLineBefore = true;
+
+      this.nbsp = nbspSequence(filename) || '~';
+      var text = fs.readFileSync(filename, { encoding: 'utf8' });
+      var paragraphs = text.split('\n\n');
+
+      each(Object.keys(paragraphs), function (i, cb) {
+        this.scanParagraph(paragraphs[i], function (err, paragraph) {
+          if (err) return cb(err);
+          paragraphs[i] = paragraph;
+          cb();
+        });
+      }.bind(this), saveFile);
+
+      function saveFile(err) {
+        if (err) return cb(err);
+
+        inquire({
+          type: 'confirm',
+          message: 'Save the file',
+          name: 'save'
+        }, function (answer) {
+          if (answer.save) {
+            fs.writeFileSync(filename, paragraphs.join('\n\n'),
+                             { encoding: 'utf8' });
+          }
+          cb();
+        });
+      }
+    },
+
+    scanParagraph: function (text, cb) {
+      var positions = nbspPositions(text);
+      if (!positions.length) {
+        return process.nextTick(cb.bind(null, null, text));
+      }
+
+      var parts = fzip([-1].concat(positions), positions.concat(Infinity),
+                       function (left, right) {
+                         return text.slice(left + 1, right);
+                       });
+      console.log(parts.join(chalk.green(this.nbsp)).trim());
+
+      inquire({
+        type: 'confirm',
+        message: 'Apply changes',
+        name: 'apply'
+      }, function (answer) {
+        cb(null, parts.join(answer.apply ? this.nbsp : ' '));
+      }.bind(this));
+    }
   };
-}());
+};
 
 
 var getFiles = function (path) {
@@ -83,5 +110,9 @@ var getFiles = function (path) {
     argv = ['.'];
   }
 
-  each(flatmap(argv, getFiles), scanFile);
+  var scanner = Scanner();
+
+  each(flatmap(argv, getFiles), scanner.scanFile.bind(scanner), function (err) {
+    if (err) throw err;
+  });
 }(process.argv.slice(2)));
