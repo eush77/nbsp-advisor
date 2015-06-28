@@ -1,7 +1,7 @@
 {
   "name": "nbsp-advisor",
   "version": "0.0.1",
-  "description": "Tries to catch obvious cases of missing nbsp and fix it for you",
+  "description": "CLI tool that tries to fix missing non-breaking space in text documents",
   "author": "Eugene Sharygin <eush77@gmail.com>",
   "license": "MIT",
   "preferGlobal": true,
@@ -24,13 +24,16 @@
     "url": "https://github.com/eush77/nbsp-advisor/issues"
   },
   "keywords": [
+    "cli",
     "nbsp",
     "space",
     "typography",
     "writing",
     "typing",
     "helper",
-    "tool"
+    "tool",
+    "tex",
+    "latex"
   ],
   "dependencies": {
     "async-each-series": "^0.1.1",
