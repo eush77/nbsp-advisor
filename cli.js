@@ -50,7 +50,8 @@ var Scanner = function () {
         inquire({
           type: 'confirm',
           message: 'Save the file',
-          name: 'save'
+          name: 'save',
+          default: false
         }, function (answer) {
           if (answer.save) {
             fs.writeFileSync(filename, paragraphs.join('\n\n'),
@@ -76,7 +77,8 @@ var Scanner = function () {
       inquire({
         type: 'confirm',
         message: 'Apply changes',
-        name: 'apply'
+        name: 'apply',
+        default: false
       }, function (answer) {
         cb(null, parts.join(answer.apply ? this.nbsp : ' '));
       }.bind(this));
