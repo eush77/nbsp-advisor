@@ -1,6 +1,6 @@
 'use strict';
 
-var nbspPositions = require('../src/nbsp-positions');
+var nbspPositions = require('../lib/nbsp-positions');
 
 var test = require('tape');
 

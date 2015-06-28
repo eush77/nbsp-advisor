@@ -13,7 +13,7 @@
   },
   "files": [
     "cli.js",
-    "src/"
+    "lib/"
   ],
   "homepage": "https://github.com/eush77/nbsp-advisor",
   "repository": {

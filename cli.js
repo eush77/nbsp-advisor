@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 'use strict';
 
-var nbspPositions = require('./src/nbsp-positions'),
-    nbspSequence = require('./src/nbsp-sequence');
+var nbspPositions = require('./lib/nbsp-positions'),
+    nbspSequence = require('./lib/nbsp-sequence');
 
 var flatmap = require('flatmap'),
     fzip = require('fzip'),
