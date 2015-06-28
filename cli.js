@@ -8,10 +8,16 @@ var flatmap = require('flatmap'),
     fzip = require('fzip'),
     chalk = require('chalk'),
     inquire = require('inquirer').prompt,
-    each = require('async-each-series');
+    each = require('async-each-series'),
+    help = require('help-version')(usage()).help;
 
 var fs = require('fs'),
     Path = require('path');
+
+
+function usage() {
+  return 'Usage:  nbsp-advisor [<file> | <directory>]...';
+}
 
 
 var scanFile = (function () {
@@ -73,16 +79,6 @@ var getFiles = function (path) {
 
 
 (function main(argv) {
-  var usage = function (code) {
-    var name = require('./package.json').name;
-    console.log('Usage:  ' + name + ' [<file> | <directory>]...');
-    return code || 0;
-  };
-
-  if (argv == '--help') {
-    return usage();
-  }
-
   if (!argv.length) {
     argv = ['.'];
   }
