@@ -1,4 +1,4 @@
-[![npm](https://nodei.co/npm/nbsp-advisor.png)](https://nodei.co/npm/nbsp-advisor/)
+[![npm](https://nodei.co/npm/nbsp-advisor.png)](https://npmjs.com/package/nbsp-advisor)
 
 # nbsp-advisor
 
