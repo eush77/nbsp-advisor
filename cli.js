@@ -35,18 +35,22 @@ var Scanner = function () {
       this.nbsp = nbspSequence(filename) || '~';
       var text = fs.readFileSync(filename, { encoding: 'utf8' });
       var paragraphs = text.split('\n\n');
+      var changed = false;
 
       each(Object.keys(paragraphs), function (i, cb) {
-        this.scanParagraph(paragraphs[i], function (err, paragraph, abort) {
+        this.scanParagraph(paragraphs[i], function (err, paragraph, status) {
           if (err) return cb(err);
-          if (abort) return cb(true);
-          paragraphs[i] = paragraph;
+          if (status.abort) return cb(true);
+          if (status.changed) {
+            paragraphs[i] = paragraph;
+            changed = true;
+          }
           cb();
         });
       }.bind(this), saveFile);
 
       function saveFile(err) {
-        if (err == true) {
+        if (err == true || !changed) {
           return cb();
         }
         if (err) return cb(err);
@@ -69,7 +73,7 @@ var Scanner = function () {
     scanParagraph: function (text, cb) {
       var positions = nbspPositions(text);
       if (!positions.length) {
-        return process.nextTick(cb.bind(null, null, text));
+        return process.nextTick(cb.bind(null, null, text, { changed: false }));
       }
 
       var parts = fzip([-1].concat(positions), positions.concat(Infinity),
@@ -103,7 +107,10 @@ var Scanner = function () {
           var abort = true;
           answer.apply = false;
         }
-        cb(null, parts.join(answer.apply ? this.nbsp : ' '), abort);
+        cb(null, parts.join(answer.apply ? this.nbsp : ' '), {
+          changed: answer.apply,
+          abort: abort
+        });
       }.bind(this));
     }
   };
