@@ -37,14 +37,18 @@ var Scanner = function () {
       var paragraphs = text.split('\n\n');
 
       each(Object.keys(paragraphs), function (i, cb) {
-        this.scanParagraph(paragraphs[i], function (err, paragraph) {
+        this.scanParagraph(paragraphs[i], function (err, paragraph, abort) {
           if (err) return cb(err);
+          if (abort) return cb(true);
           paragraphs[i] = paragraph;
           cb();
         });
       }.bind(this), saveFile);
 
       function saveFile(err) {
+        if (err == true) {
+          return cb();
+        }
         if (err) return cb(err);
 
         inquire({
@@ -75,12 +79,31 @@ var Scanner = function () {
       console.log(parts.join(chalk.green(this.nbsp)).trim());
 
       inquire({
-        type: 'confirm',
+        type: 'expand',
         message: 'Apply changes',
         name: 'apply',
-        default: false
+        choices: [
+          {
+            key: 'y',
+            name: 'yes',
+            value: true
+          }, {
+            key: 'n',
+            name: 'no',
+            value: false
+          }, {
+            key: 'q',
+            name: 'quit',
+            value: 'quit'
+          }
+        ],
+        default: 1
       }, function (answer) {
-        cb(null, parts.join(answer.apply ? this.nbsp : ' '));
+        if (answer.apply == 'quit') {
+          var abort = true;
+          answer.apply = false;
+        }
+        cb(null, parts.join(answer.apply ? this.nbsp : ' '), abort);
       }.bind(this));
     }
   };
