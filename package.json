@@ -1,6 +1,6 @@
 {
   "name": "nbsp-advisor",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "CLI tool that tries to fix missing non-breaking space in text documents",
   "author": "Eugene Sharygin <eush77@gmail.com>",
   "license": "MIT",
