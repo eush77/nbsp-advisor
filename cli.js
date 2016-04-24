@@ -23,6 +23,7 @@ function usage() {
 var Scanner = function () {
   return {
     needEmptyLineBefore: false,
+    applyAll: false,
 
     scanFile: function (filename, cb) {
       // Print the header.
@@ -82,6 +83,17 @@ var Scanner = function () {
                        });
       console.log(parts.join(chalk.green(this.nbsp)).trim());
 
+      var apply = function (apply, abort) {
+        cb(null, parts.join(apply ? this.nbsp : ' '), {
+          changed: apply,
+          abort: abort
+        });
+      }.bind(this);
+
+      if (this.applyAll) {
+        return apply(true, false);
+      }
+
       inquire({
         type: 'expand',
         message: 'Apply changes',
@@ -96,6 +108,10 @@ var Scanner = function () {
             name: 'no',
             value: false
           }, {
+            key: 'a',
+            name: 'all',
+            value: 'all'
+          }, {
             key: 'q',
             name: 'quit',
             value: 'quit'
@@ -103,14 +119,17 @@ var Scanner = function () {
         ],
         default: 1
       }, function (answer) {
-        if (answer.apply == 'quit') {
-          var abort = true;
-          answer.apply = false;
+        switch (answer.apply) {
+          case 'quit':
+            return apply(false, true);
+
+          case 'all':
+            this.applyAll = true;
+            // Fall through.
+
+          default:
+            return apply(answer.apply, false);
         }
-        cb(null, parts.join(answer.apply ? this.nbsp : ' '), {
-          changed: answer.apply,
-          abort: abort
-        });
       }.bind(this));
     }
   };
