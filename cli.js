@@ -33,7 +33,7 @@ var Scanner = function () {
       console.log(chalk.bold.green(filename));
       this.needEmptyLineBefore = true;
 
-      this.nbsp = nbspSequence(filename) || '~';
+      this.nbsp = nbspSequence(filename) || ' ';
       var text = fs.readFileSync(filename, { encoding: 'utf8' });
       var paragraphs = text.split('\n\n');
       var changed = false;
@@ -81,7 +81,7 @@ var Scanner = function () {
                        function (left, right) {
                          return text.slice(left + 1, right);
                        });
-      console.log(parts.join(chalk.green(this.nbsp)).trim());
+      console.log(parts.join(chalk.green(this.nbsp == ' ' ? '█' : this.nbsp)).trim());
 
       var apply = function (apply, abort) {
         cb(null, parts.join(apply ? this.nbsp : ' '), {

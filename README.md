@@ -42,7 +42,7 @@ SOFTWARE.
 
 Offers you some non-breaking space, one paragraph at a time. You can answer `y` or `n` (or `q` to quit). You can save changes at the end.
 
-Syntax is `~` for LaTeX documents and `&nbsp;` for HTML files. For other files, `~` is the default.
+Syntax is `~` for LaTeX documents and `&nbsp;` for HTML files. For other files, unicode non-breaking space (U+00A0) is the default.
 
 File is scanned from top to bottom, but in the future it should be integrated with version control systems (like Git) to avoid skipping the same parts of the file over and over again.
 
